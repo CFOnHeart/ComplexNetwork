@@ -10,7 +10,7 @@ import networkx as nx
 import os
 import math
 
-def load_data(path):
+def load_data(path, split_char='\t'):
 
     nodes = []
     edges = []
@@ -21,7 +21,7 @@ def load_data(path):
     lines = open(path, 'r')
 
     for line in lines:
-        edge = line.strip().split('\t')
+        edge = line.strip().split(split_char)
 
         u = int(edge[0]) - 1
         v = int(edge[1]) - 1
@@ -45,8 +45,8 @@ def load_graph(nodes, edges):
     return G
 
 
-def load_graph_from_path(path):
-    nodes, edges = load_data(path)
+def load_graph_from_path(path, split_char='\t'):
+    nodes, edges = load_data(path, split_char)
     return load_graph(nodes, edges)
 
 class FastUnfolding:
@@ -121,7 +121,7 @@ class FastUnfolding:
         return first - second
 
     def update_modularity(self, u, c):  # 将点u加入到社区c中能使Q值增大, 那么做此处理，并更新相关的变量
-        print 'update_modularity: node', u, 'add to community ', c
+        # print 'update_modularity: node', u, 'add to community ', c
 
         self.sum_in[c] += self.G_cluster[u][c]['weight'] * 2 + self.sum_in[u]
 
@@ -204,7 +204,7 @@ class FastUnfolding:
             if optimal_cluster != -1:
                 self.cur_Q += optimal_delta
                 self.update_modularity(u, optimal_cluster)
-                print 'after this update --> curQ: {}'.format(self.cur_Q)
+                # print 'after this update --> curQ: {}'.format(self.cur_Q)
 
                 flag = True
 
@@ -237,7 +237,13 @@ class FastUnfolding:
 
 
 if __name__ == '__main__':
+    print 'start load data'
     G = load_graph_from_path('../data/artificial_data/30rings.txt')
+    # G = load_graph_from_path('../data/ia-dbpedia-team-bi.edges', ' ')
+    # G = load_graph_from_path('../data/karate/karate.txt')
+    print 'finish load data'
+    print 'number of nodes: {}'.format(G.number_of_nodes())
+    print 'number of edges: {}'.format(G.number_of_edges())
     # print G.number_of_edges()
     # G.remove_node(1)
     # print G.number_of_edges()
